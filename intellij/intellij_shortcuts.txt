@@ -1,0 +1,54 @@
+Control + q				See the documentation for a class or method currently at caret in a popup
+
+Control + p				when cursos is between parentheses of a method call, this shortcut pops-up a list of valid 
+					parameters
+Control + N				Open class
+Alt + F7				Find all places where a particular class, method or variable is used in whole project
+						Caret must be on the symbol's name or at its usage in the code
+Control + d				Duplicate selected code block
+
+Code completion
+===============						
+Control + Space			Code completion = quickly complete different kinds of statements in the code. 
+						For example, start typing a class name and press Ctrl+Space to complete it. When multiple 
+						choices are available, they are shown in the lookup list.
+Control + Shift + Space		Intelligent code completion						
+
+Control + J				Complete Live code template
+<Control> + <Alt> + t	Surround the selected code with some new code
+
+Override/implement methods
+==========================						
+Control + o				Override methods of the base class
+Control + i				Implement methods of the implemented interfaces or of the abstract base class
+
+Go to/navigate to declarations/implementations
+==============================================
+<Control> + b 			Go to DECLARATION of the code you are actually with the cursor on
+<Control> + <Alt> + b 	Go to IMPLEMENTATION(s)
+
+Refactoring
+===========
+
+Control + Alt + Shift + T 	open the refactor popup menu 
+
+Control + Alt + v			Refactor / extract variable
+
+
+========================================
+<Alt> + 7 : Structure of a specific file
+		--> from here you can do <Alt> + <F1> to go to Project View ...	
+	
+<Alt> + 9 : Version control
+
+
+
+<Control> + h : TYPE hierarchy (when cursor is on a class)
+<Control> + <Shift> + h : METHOD hierarchy (when cursor is on a method)
+
+Control + Alt + L		Format code
+Control + Alt + i		Get indentation right for selected code
+
+
+
+						

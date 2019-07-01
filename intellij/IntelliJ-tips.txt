@@ -1,0 +1,261 @@
+Navigation through files
+========================
+
+<Control> + n : Find a CLASS 	--> Camel case completion
+								--> * wildcard
+								--> Go to line 40 of class MapperTest = MapperTest:40
+<Control> + <Shift> + n : 	Find a FILE
+							Find a FOLDER
+							wildcards
+
+<Control> + <Alt> + <Shift> + n : Look for a SYMBOL (across entire codebase) (variables, 
+									methods, ...)
+								Namespace filtering:
+								--> use Classname.symbolName when you know in which 
+									class it is
+								--> Camel case completion for classname is available
+																				
+<Shift> + <Shift> : Search anywhere, for anything (search for a Type, 
+					search for a File, ...)
+						--> Camel case completion, ... is available
+						--> Once you start typing, the dropdown that will be shown, 
+							contains different sections which you can reach with <TAB> key
+						--> shows us recent files by default
+								this is a good alternative for tabs
+						--> not only looks for classes, but also for files, actions in 
+							the menu items, run configurations, ... 
+							
+							ex. 'nav' --> switch on/off the navigation bar
+							ex. 'toolbar' --> switch on/off the main toolbar
+							ex. 'annotate' --> switch on/off the annotations (git)
+							ex. type in the run/debug configuration you want to start
+									--> to select a run configuration, you can switch 
+									between a debug and a run config by using 
+									the <Shift> button	
+							ex. 'Test restfull' --> opens a tool to test a rest api
+						--> use < and > arrow to get previous and next search you used 
+							before (history)
+						
+
+<Control> + <Shift> + a : Find an action (popup menu)
+<Control> + <Shift> + f : Find in path (Menu Edit / Find / Find in Path)
+							-> this has a Preview tab!!
+			
+<Control> + e 			: Popup menu with recent files (when you start typing in the 
+							popup menu, you can filter the list)
+<Control> + <Shift> + e : Popup menu with recently edited files	
+
+ALT + number
+============
+
+<Alt> + 1 : go to Project panel or toggle on/off Project pane (left side panel)
+<Alt> + 7 : Structure of a specific file
+		--> from here you can do <Alt> + <F1> to go to Project View ...	
+	
+<Alt> + 9 : Version control
+	--> local changes tab: shows any changes you have made to the project
+	--> Shelf tab: tracks changes that you want to save for later
+	--> Log tab: list of changes that you have in your LOCAL repository (here you find where HEAD and master are located)
+<Alt> + ´ : Version control operations popup (also available in menu VCS)
+
+ALT + F-key
+===========
+
+<Alt> + <F1> : Popup with several handy shortcuts (show in explorer, maven project, ...)
+<Alt> + <F4> : shutdown IntellJ
+<Alt> + <F7> : find usages of a class/interface
+<Alt> + <F12> : Toggle on/off terminal window
+
+<Control> + a : select all		
+		
+Navigate between Project structure (left pane) and code editor window
+=====================================================================
+	Automatically: Settings / Autoscroll from source
+							  Autoscroll to source
+							  
+							  Tip: only enable Autoscroll from source (the other option is annoying)
+							  
+	Manually: 	
+			Scroll to source
+				1. select a file in the left pane 
+				2. press <ENTER> --> file will be opened 
+					(if you have show members turned on, select a 
+						member of the class)
+				3. press <ESC> to give the file the focus in the code editor window
+				
+				You can do step 2. and 3. in 1 action by pressing F4 key
+			Scroll from source
+				to give back focus to the left pane (project structure) 
+					press <Alt> + 1   OR     <Alt> + <F1> and then <ENTER>
+
+
+
+<Alt> + <HOME> : 	Go to navigation bar (when turned on) 
+					or 
+					show the navigation bar as a pop-up (when turned off)
+
+Navigation through code
+=======================
+<Control> + F12 : shows the structure as a popup	(same as ctrl + o in Eclipse)
+					
+
+
+<Alt> + <Shift> + c : Popup with recent changes 
+
+<Control> + <TAB> : move forward through Popup menu with recent files
+<Control> + <Shift> + <TAB>	: move backward through Popup menu with recent files
+					
+<Control> + <Alt> + < : previous position in the code
+<Control> + <Alt> + > : next position in the code
+
+<Control> + b : Go to declaration of the code you are actually with the cursor on
+<Control> + <Alt> + b : Go to implementation(s)
+<Control> + h : type hierarchy (when cursor is on a class)
+<Control> + <Shift> + h : method hierarchy (when cursor is on a method)
+<Shift> + F11 : Bookmarks (how to set bookmarks??)
+
+<Alt> + arrow down : Go to next method
+<Alt> + arrow up : Go to previous method
+<Control> + <Enter> : Split line (in code editor window)
+
+
+<Shift> + c : New menu
+
+Editor
+======
+<Control> + <Shift> + F12 : editor in full screen (on/off) = switch on/off the 
+							toolbars (left, right)
+							
+View menu / Enter (Exit) presentation mode 
+			Enter (Exit) full screen 
+			Enter (Exit) distraction free mode...
+Window menu / Editor tabs / Split horizon. (vertical.)
+
+
+<Shift> + F4 : extract an editor
+
+Editing
+=======
+
+<Control> + w : context aware selection of code (press w multiple times to select more code)
+<Control> + <Shift> + w : context aware selection of code (this will select less and less 
+							every time you press this combination)
+
+<Shift> + <Alt> + Up-arrow : move selected code up
+<Shift> + <Alt> + Down-arrow: move selected code down
+
+<Control> + x : cut the line that has focus
+<Control> + v : paste the line you last cut
+<Control> + <shift> + v : clipboard history = popup with al the recent pieces of code 
+							you can choose from to paste  
+
+<Control> + d : duplicate current line
+<Control> + y : delete a line
+
+<Control> + <Alt> + i : Get indentation right
+
+<Control> + <Alt> + l : Reformat code (applies what you have configured 
+						via Settings / Editor / Code Style / Java
+<Control> + <Alt> + <Shift> + l : Reformat code popup menu
+									Or alternatively <Shift> + <Shift> + Code Cleanup...
+									Or <Alt> + <Enter> --> 'Adjust code style settings' from pop-up menu
+
+<Control> + <Alt> + <Shift> + j : Select all occurences of the word your cursor is actually on
+ 
+Take a look at: Settings / Editor / Code style / Java / Imports   AND Settings / Editor / General / Auto import
+
+<Control> + q : quick documentation, shows the javadoc of a class
+
+Code Completion
+===============
+
+<Alt> + <Insert> : 
+<Alt> + <Enter> : 
+	'Language injection' from pop-up menu
+
+<Control> + <Space> : code completation
+<Control> + <Shift> + <Space> : intelligent code completion (like normal code completion but narrows it down to 
+									what actually makes sense in that context, not all what is potentially 
+									possible)
+			
+<Control> + p : get parameter info, when you are calling a method (ex. new ClassName(...))			
+<Control> + <Shift> + Enter : complete the current statement
+
+<Control> + <Alt> + t : surround the selected code with some new code, also works for other file types (html, ...)
+							For java you can choose between:
+								if
+								if / else
+								while
+								do / while
+								...
+								...
+								
+<Control> + <Alt> + <Shift> + t : Refactor this
+
+<Control> + j : Insert Live Template (Live templates can be found under Menu File / Settings / Editor / Live Templates
+
+File templates (New class, new interface, new enum, new html file, ...) can be found under Menu File / Settings / Editor / File and code Templates
+
+
+#myDiv>ul>li*5 + TAB generates <div id="myDiv"><ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+	
+
+Menu File / Settings / Editor / Inspections  list of warnings, hints, tips, errors IntelliJ can warn you for
+
+Put cursor on class + press <Alt> + Enter --> popup menu with what you can do with/for the 
+												class (create sub-class, create test
+
+F2 : Navigate to next highlighted Error --> Alt + Enter to open intentions in popup (quick fix)
+<Shift> + F2 : Navigate to previous highlighted Error
+Unit testing
+============
+
+Inside a unit test... <Alt> + <Insert> --> Generate test method, setup method, ...
+
+<Control> + <Shift> + t : toggle between your test and production code (=navigate to test)
+
+<Control> + <Shift> + F10 : run test or run test method when you are inside a testmethod with cursor.
+<Shift> + F10: re-run last config
+
+Refactoring
+===========
+
+Control + Alt + Shift + T : open the refactor popup menu 
+
+Control + Alt + M : extract method refactoring (first select a block of code you want to extract)
+Control + Alt + P : extract parameter refactoring
+Control + F6 : change signature of a method refactoring
+
+
+Inspections
+===========
+
+Alt + Shift + I : open inspections
+Control + Alt + Shift + I : open inspection by name
+Control + Alt + Shift + a  = run action + type 'Run inspection by name'
+
+Git
+===
+
+<Control> + k : commit
+
+Varia
+=====
+Rest Client -> format the response: Control + Alt + L
+
+<Control> + <Shift> + F10 : run 
+
+type new Object()	use <Control> + w to select the code	
+					press <Control> + <Alt> + v --> insert local variable will result in
+														Object o = new Object();
+
+
+<Control> + <Shift> + >			resize left pane (Project or structure pane)
+<Control> + <Shift> + <
