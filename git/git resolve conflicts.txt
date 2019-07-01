@@ -1,0 +1,114 @@
+Resolving conflicts
+===================
+
+Working with real projects you will sooner or later encounter conflicts.
+They occur when you merge branches that include different modifications of exactly the same line of a file.
+
+In git, a CONFLICT is resolved when you STAGE a file (git add)
+
+Creating conflicting changes in text files
+------------------------------------------
+
+	git init 09-01
+	cd 09-01
+	create numbers.txt					contains following lines: 	1
+																	2
+																	3
+	git snapshot Numbers:1, 2, 3		commit the file
+	git branch en
+	git branch fr
+	git checkout en
+	change contents of numbers.txt		contains following lines:	1
+																	two
+																	3
+	git snapshot Numbers: two			commit the file
+	git checkout fr
+	change contents of numbers.txt		contains following lines:	1
+																	deux
+																	3
+	git snapshot Numbers: deux
+	git checkout en
+	
+Resolving textual conflicht after merging
+-----------------------------------------
+
+	git checkout en						make sure you are on 'en' branch
+	git merge fr						merge the 'fr' branch into 'en', a merge conflict --> merging was paused
+										we get the instruction to 'fix conflicts and then commit the result'
+	git status -s						UU numbers.txt
+										U stands for 'Updated but unmerged'
+	resolve the conflicting files
+	git status -s						UU numbers.txt
+	git add numbers.txt					change the status of the file from UU to M_
+	git commit --no-edit				commit the changes
+	
+Staging a file resolves a conflict:
+	We could leave the file with the <<<<<<<, ======, >>>>>>> markers in it. Removing them does not mean you resolve a conflict. 
+	That's done by adding the file (git add)
+	
+From time to time you would use the contents introduced in one branch and ignore the changes from the other branch. Here come the 
+following commands into play:
+
+	git checkout --ours [filename]		current branch
+	git checkout --theirs [filename]	the branch passed to the git merge command
+	
+These commands do not resolve the conflict. They restore the contents of the file, without changing its state (UU)
+
+	git checkout --merge numbers.txt		creates following contents:
+											1
+											<<<<<<< ours
+											two
+											=======
+											deux
+											>>>>>>> theirs
+											3
+											
+	git checkout --conflict=diff3 numbers.txt	creates following contents:
+												1
+												<<<<<<< ours
+												two
+												||||||||| base
+												2
+												=========
+												deux
+												>>>>>>>> theirs
+												3
+												
+When all conflicts are resolved, you can resumte the paused merge with 
+
+	git commit --no-edit			--no-edit is not mandatory but it avoids you have to take care of a commit message
+	
+To abort a merge:
+	
+	git merge --abort
+	
+Resolving textual conflict after rebasing
+-----------------------------------------
+
+Rebase the branch 'en' onto 'fr'
+
+	git rebase fr en				rebase en onto fr branch
+									this will fail with a merge conflict in numbers.txt
+	git status -s					UU numbers.txt
+	resolve the conflicting file(s)
+	git add numbers.txt				stage the file, which changes the state from UU into M_
+	git rebase --continue
+	
+In this scenario, we could retrieve the 4 states of numbers.txt with following commands:
+
+	git checkout --ours numbers.txt		--ours means here fr
+	git checkout --theirs numbers.txt	--theirs means here en
+	git checkout --merge numbers.txt
+	git checkout --conflicht=diff3 numbers.txt
+	
+When all conflichts are resolved, you can continue rebasing with:
+
+	git rebase --continue
+
+You can abort the rebase:
+
+	git rebase --abort
+	
+Creating conflicting changes in binary files
+--------------------------------------------
+

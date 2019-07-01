@@ -1,0 +1,597 @@
+Help
+====
+git help
+	only porcelain commands: high-level commands for every day use
+			git add
+			git commit
+			git help
+			git push
+git help -g
+	Plumbing commands: low-level commands 
+			git receive-pack
+			git update-index
+			git upload-pack
+
+git help -a
+	porcelain + plumbing commands
+
+Explore git history
+===================
+
+git log
+git log -n 2	limit the number of commits
+git log --abbrev-commit --abbrev=4 --pretty=oneline -10
+git log --author="Tom Van den Eynde"
+git log --abbrev-commit --abbrev=4 --pretty=oneline -10 --author="Tom Van den Eynde"
+git log --pretty=oneline --since="2012-12-20" --until="2013-01-01" -5
+git log --pretty=format:"%an %H"
+			%an		author's name
+			%H		full SHA-1 hash
+			%h		abbrev. hash
+			%ae		author email
+			%ad		author date
+			%cn		committer name
+			%ce		committer email
+			%cd		committer date
+		--pretty=oneline			name and comment printed in one line
+				=short				name, author and comment
+				=medium				short + revision's date
+				=full				name, author, committer and comment
+				=fuller				name, author, author's date, committer, commit's date and comment
+				=email				short but in email format
+		--since="1 week ago"
+		--since="Two months ago"
+		--until="5 days ago"
+		--until="7 hours ago"
+		--until="yesterday"
+		--since=1.week.ago --until=5.days.ago (no " necessary)
+		--since=2016-11-01
+		--author="Tom" 		part of the authors name must be Tom
+		--grep="Initial"	stands for global regular expression search and means that the commit message must contain
+							mmmmmtext that matches the expression
+		
+		
+git log --pretty=oneline | wc l		number of commits in the repository
+
+git shortlog						commit info grouped by authors
+										results in:	Alexander Farkas (5):
+														  Used the patch from Alexander as the basis for a rewrite of the IE change event logic. Now has full parity with the regular change event in other browsers: Works with regular bind, works better with 
+														  Make sure that the beforeactivate event isn't accidentally prevented.
+														  dealing with boolean content attribute
+														  handle data- and aria- special
+														  Fix #12915, add propHook for scrip src property on oldIE. Close gh-1035.
+
+													Alexander O'Mara (1):
+														  Core: Follow the AMD specification for define
+
+													Alexis Abril (1):
+														  Fixes #7328. When getting data- attributes, after-cap any embedded dashes per the W3C HTML5 spec.
+
+git shortlog -s						number of revisions and developer's name
+git shortlog -s -n					same as above but ordered by number of revisions
+git shortlog -s | wc -l				number of contributors
+git log --pretty=format:%cd --date=short | uniq | wc -l		number of days worked on the project
+du -h -s .git						amount of space used by git directory
+du -h -s --exclude=.git				amount of space used by working directory
+git ls-files | wc -l				number of files in working directory
+git ls-files						gives a list of all the tracked files in the current git repository
+
+Status
+======
+
+git status
+git status -s
+git status -s -b					answers the following:
+											- is repo clean or dirty (= are there uncommited changes??)
+											- is repo in a detached HEAD state or on a branch (prints the name of the branch)
+
+Start a new repository
+======================
+git init							new git repo is created in current directory
+									To create a new repository in an existing project:
+									
+										cd my/important/project
+										git init
+										git add -A
+										git commit -m "Initial commit"
+										
+git init repo_folder				new git repo is created in repo_folder directory
+
+Clone a repository
+==================
+
+git clone source_repo target_repo						clone a local repository
+git clone https://github.com/jquery/jquery jquery		clone a repo on a git server on your local machine
+															afterwards, in ./jquery/.git/config
+																	[remote "origin"]
+																		url=https://github.com/jquery/jquery.git
+																		
+																		
+git clone --bare source_repo target_repo				clone, but only the .git directory (not the working directory)
+
+Add a new revision (in local branch)
+====================================
+
+git add -A
+git commit -m "Commit message goes here ..."f
+
+	Together, these 2 commands save the current state of the working directory (often called a snapshot) as a new revision
+
+Restore an old revision
+=======================
+
+2 options: 	- git reset
+			- git checkout
+			
+git reset
+---------
+git reset --hard [REVISION]				- reset the state of the working directory to the specified revision (with ls, you can check that the 
+										  working directory contains only the files from that revision)
+										- remove from the history all the revisions that were created after specified revision (with git l, you will
+										  see that only the revisions up to [REVISION] are present
+
+!! To return to the original state of the repo, as it was before the git reset command, you have to remember the name of the latest 
+revision or use reflog and do:
+
+	git reset --hard [REVISION_BEFORE_RESET]
+	
+git checkout  --> detached head?? - only when [SHA-1]?)
+------------
+
+git checkout [REVISION]					- enters a DETACHED HEAD state (is a special state in which you are NOT ON ANY BRANCH)
+											if you are in this state and issue following command:
+											
+												git status -b
+												
+											the output will be 'HEAD detached at [SHA-1]' instead of 'On branch master'
+										- resets the state of the working directory to the specified revision
+										- removes from the history all the revisions that were created after the specified revision
+										
+!! To return to the original state:	
+
+	git checkout master
+	
+This command will warn you to prevent you from loosing uncommitted changes 
+
+Reflog
+======
+
+git reflog			is a special log that stores the information about your movements in the repository. Each time you create a revision, reset the
+					repository, or otherwise change the current revision, the reflog is updated. 
+					HEAD@{0} always points to the current revision.
+					HEAD@{1} points to the previous revision
+					HEAD@{2} points to revision that was created 2 operations ago
+					
+Loosing UNCOMMITTED changes
+===========================
+
+git simple-commit m1
+git simple-commit m2
+git simple-commit m3
+echo m2_changed > m2.txt 				(change file)
+echo m3_changed > m3.txt				(change file)
+echo m4 > m4.txt 						(new file)
+
+Status is now that you have 2 modified files (m2 and m3) and one new file (m4)
+
+git reflog
+git reset --hard [SHA-1_from_reflog_m2]	(working dir contains m1, m2 (with original content (m2)), m4)
+	
+If you now return to latest SHA, changes to m2, m3 will be lost. m4 will still be available.
+
+!! uncommited changes can be lost --> use git reset --hard [REVISION] only in clean directories
+
+git checkout [REVISION] warns you for los of uncommitted changes!!
+
+Loosing COMMITS
+===============
+git simple-commit m1 m2 m3
+git l
+git rest --hard [SHA-1_from_m1]
+
+we can return to the revisions from m2 and m3 (dangling revisions) because stil reachable through various symbolic references (REACHABLE)
+
+git reflog expire --all --expire=now				(make revisions unreachable = remove symbolic references --> only reachable via SHA-1 names)
+git prune											
+
+now we can no longer return to the revisions from m2 and m3 (dangling revisions)
+
+Managing files
+==============
+
+git commit -m "commit message..."				create a new revision containing all the STAGED files
+git commit -a -m "comm. message .."				create a new revision containing all the TRACKED files (staged and unstaged)
+												untracked files (??) are not modified by this commit!
+
+revers the state of a file from A_ to ??:
+-----------------------------------------
+
+Here we want to return from a file newly added to the staging area to untracked
+
+	git rm --cached -- [filename]
+	
+	or
+	
+	git reset -- [filename]
+	
+	
+revers the state of a file from M_ to _M:
+-----------------------------------------
+
+Here we want to return from a modified file that is already staged to a modified file not yet staged. The modifications to the 
+file are not lost!
+
+	git checkout -- [filename]
+	
+staging and committing a removed file
+-------------------------------------
+
+	git simple-commit deleted
+	git rm deleted.txt							file is no longer in the working directory
+(1)	git s										deleted.txt has status D_ --> the removal is already staged
+	git commit -m "committing removal"
+	git s										repository is clean now
+	
+situation in (1) can be reversed:
+	git reset -- [filename]						converts state D_ --> _D (this means file is still missing in working directory, but present in stagin area)
+	git checkout -- [filename]					restore file from staging area 
+	
+committing a file removed with the standard rm command
+------------------------------------------------------
+
+	git simple-commit removed
+	rm removed.txt
+(0)	git s										status is _D (removed from working directory but not staged)
+	git add -A
+(1)	git s										status is D_ (removal is now staged)
+	git commit -m "Staging and committing removal"
+	git s										repository is clean
+	
+The previous command git rm removed would cause us to end up in situation at point (1) with one simple command.
+Just like in the previous case, undo is possible.
+	In situation (0) 	git checkout -- [filename] 
+	In situation (1) 	git reset -- [filename]
+						git checkout -- [filename]
+						
+						
+converting an unmodfied file into an untracked file
+---------------------------------------------------
+
+	git simple-commit untracked
+	git rm --cached untracked.txt				file is still in the working directory 	--> previously we did git rm untracked.txt --> file immediately removed from working directory aswel
+	git s										D_ untracked.txt 						--> previously git s would result in	D_ untracked.txt
+												?? untracked.txt
+	git commit -m "committing removal"
+	git s										?? untracked.txt
+	
+staging and committing a file renamed with git mv
+-------------------------------------------------
+
+	git simple-commit old-name
+	git mv old-name.txt new-name.txt			working directory contains new-name.txt, old-name.txt has disappeared
+	git s										R_ old-name.txt -> new-name.txt (the rename is staged + state of the file in work. dir. is exactly same as in staging area)
+	git commit -m "staging and committing moved file"
+	git s										repository is clean
+	
+	Undo the operation of git mv command is a 2-step process:
+		git reset -- [new-filename]				this results in two files
+		git s									D_ old-file.txt
+												?? new-file.txt
+		git checkout -- [old-filename]			
+		rm new-file.txt
+		
+committing a fle renamed with the standard mv command
+-----------------------------------------------------
+
+	git simple-commit old-name
+	mv old-name.txt new-name.txt
+	git s										_D old-name.txt (not staged!)
+												?? new-name.txt	(new file)
+	git add new-name.txt						
+	git s										A_ new-name.txt
+												_D old-name.txt
+	git rm old-name.txt							stage the removed file
+	git s										R_ old-name.txt -> new-name.txt
+	git commit -m "message..."					
+	git s										repo is clean
+	
+combination
+-----------
+
+	git simple-commit modified deleted old-name
+	echo new > new.txt							new file
+	echo new_content > modified.txt				modify file
+	rm deleted.txt								delete a file
+	mv old-name.txt new-name.txt				rename
+	git s										_D deleted.txt
+												_M modified.txt
+												_D old-name.txt
+												?? new-name.txt
+												?? new.txt
+	git add -A
+	git s										D_ deleted.txt
+												M_ modified.txt
+												R_ old-name.txt -> new-name.txt
+												A_ new.txt
+	git commit -m "message"						
+	git s										repo is clean
+	
+mixed state
+-----------
+
+	echo blabla > file.txt
+	git add file.txt
+	git s										A_ file.txt
+	echo aaaa > file.txt
+	git s										AM file.txt
+	git commit -m 'message'
+	git s										_M file.txt
+	
+Branches locally
+================
+
+git branch							list of branches
+git branch -v						list of branches with latest revision of every branch printed
+									ex.	* 	doc  	23d9855 d3
+											info 	0d6501b i3
+											master	7c9bc41 m3
+											
+git branch doc						create branch with name 'doc'
+git checkout doc					switch to 'doc' branch
+
+git checkout -b info master				create new branch named info, which points to the same revision as branch master
+git branch -m mynewfeature newfeature			rename existing branch
+git brnach -d newfeature				delete a branch
+
+
+example
+
+git simple-commit m1 m2 m3
+git checkout -b doc					this is a shortcut for 	git branch doc
+															git checkout doc 
+git simple-commit d1 d2
+git checkout -b info 'HEAD@{4}'		HEAD@{0} is commit d1, {1} is commit d2, {2} is switch master to foo, {3} is commit m3, {4} is commit m2 and there starts branch info
+git simple-commit i1 i2
+
+git log --oneline --graph --decorate --all
+
+git checkout master
+ls									contains m1.txt m2.txt m3.txt
+git checkout info
+ls									contains m1.txt m2.txt i1.txt i2.txt
+git checkout doc
+ls									contains m1.txt m2.txt m3.txt d1.txt d2.txt
+
+git show info^{tree}				list files in info branch, without the need for you to have that branch checked out
+git show SHA^{tree}					list files in that revision, works also with HEAD@{...}
+				
+
+
+git checkout -b new-branch existing-branch		create new branch that points to the same revision as the existing branch
+git checkout -b new-branch [REVISION]			idem, revision can be sha, reflog, ...
+
+!! HEAD plays a very special role in many git commands: Everywhere you need the SHA-1 of the revision you are currently working on, you can use HEAD instead
+HEAD is usually a default value for absent parameters:
+
+git reset --hard    eq   git reset --hard HEAD
+
+git branch new-name [REVISION]    [REVISION] defines where a new branch woult point to, if ommitted, HEAD is used
+		git branch new-name    eq    git branch new-name HEAD
+		
+git checkout -b new-branch    eq    git checkout -b new-branch HEAD
+
+examples
+++++++++
+
+git branch new-branch info		#existing branch
+git branch new-branch a1b2c3ef	#abbrev SHA-1
+git branch new-branch HEAD@{5}	#reflog entry
+git branch new-branch doc~5		#ancestor reference
+git branch new-branch master^2	#n-th parent reference
+
+
+
+git remote -v					list of remote repositories (origin is the one you are tracking)
+								ex.	origin	/home/tomvde/git-recipes/05-01 (fetch)
+									origin	/home/tomvde/git-recipes/05-01 (push)
+									
+									alias 'origin' points to 05-01
+									05-01 contains 3 branches (master, info and doc) and these are called REMOTE BRANCHES
+									only way to interact with remote branches = git fetch and git push commands
+
+git remote rm origin			remove remote repository
+
+	remote repository --> remote branches
+	local repository --> local branches
+								ordinary local branches
+								remote tracking branches	local copies of remote branches, preserve the state of remote branches as was during 
+															initial clone or last fetch operation, are read-only --> we will not commit in them
+								local tracking branches		- to publish your commits in a remote branch (you can commit in them)
+															-every local tr. branch tracks (is connected to) a remote tracking branch --> initially
+															they point to same revisions as remote tr.branches
+
+git branch			lists local tracking branches + ordinary local branches
+git branch -r		lists remote tracking branches
+git branch -a		lists all branches
+git branch -a -v	lists all branches + last revision in every branch
+git branch -a -vv	full classification
+					ex.	*	bar							7c9bc41	m3
+							doc							23d9855 [origin/doc] d3
+							foo							7c9bc41 m3
+							info						0d6501b [origin/info] i3
+							master						7c9bc41 [origin/master] m3
+							remotes/origin/HEAD			-> origin/master
+							remotes/origin/doc			23d9855 d3
+							remotes/origin/info			0d6501b i3
+							remotes/origin/master		7c9bc41 m3
+
+
+branch a is merged into branch b if all revisions included in a are also included in b (MERGED)
+branch b is not merged into branch b if b has revisions that are not in branch a (NOT MERGED)
+
+if a is not merged into b and b is not merged into a, we call them DIVERGED
+
+	git branch --merged				print the names of the branches merged in the current branch
+	git branch --no-merged			print the names of the branches not merged in current branch
+
+
+
+Resetting and cleaning a branch
+-------------------------------
+
+You are working in a branch = creating, modifying, coping, removing and renaming files.
+After making some changes, you realize that all your modifications (not yet committed) are wrong.
+You want to reset tha state of your branch to the starting point
+
+git reset --hard			resets all tracked files to the state saved in the latest revision, untracked files are left untouched
+git clean -f				remove all untracked files (-f is needed otherwise git shows a message)
+
+		git simple-commit m1 m2 m3 						3 files in master branch
+		git checkout -b doc master
+		git simple-commit d1 d2 d3						3 files in doc branch
+		git checkout -b info master
+		git simple-commit i1 i2 i3
+		git checkout master
+		echo foo > bar.txt								new file
+		echo bar > m1.txt								modify
+		cp m1.txt copy.txt
+		rm m2.txt
+		mv m3.txt new-m3.txt
+		git s											_M m1.txt	(remark: nothing is already in staging area!!)
+														_D m2.txt
+														_D m3.txt
+														?? bar.txt
+														?? copy.txt
+														?? new-m3.txt
+		git reset --hard
+		git clean -f
+		
+Switching branches in a dirty respository without conflicts
+-----------------------------------------------------------
+
+		git simple-commit m1 m2 m3 						3 files in master branch
+		git checkout -b doc master
+		git simple-commit d1 d2 d3						3 files in doc branch
+		git checkout -b info master
+		git simple-commit i1 i2 i3
+		git checkout info								used branch name as revision --> not in detached state
+		echo bar > bar.txt								new file
+		echo foo > m1.txt								modify
+		rm m2.txt										delete
+		mv m3.txt new-m3.txt							rename
+		git s											##info (= the current branch)
+														_M m1.txt
+														_D m2.txt
+														_D m3.txt
+														?? bar.txt
+														?? new-m3.txt
+		git checkout doc								above changes are not staged! Repo is dirty. Change to other branch
+		git s											##doc (= the current branch)			we see all changes are preserved
+														_M m1.txt
+														_D m2.txt
+														_D m3.txt
+														?? bar.txt
+														?? new-m3.txt
+		git add -A										stage all the changes but not yet committed
+		git checkout master
+		git commit -m "..."								all changes are committed on master branch now
+		
+Git allows switching branches even if repo is dirty. By default, all changes are preserved even if they were staged or not.
+If git cannot preserve your changes, then it will refuse to switch branches. 
+
+!! Switching branches in a dirty repo is permitted if and only if changes that are not committed do not collide with the contents of the 
+branch you are switching to. 
+
+One sligth exception: branch switch when you remove a file that was not present in the branch you are switching to:
+
+		git checkout info
+		rm i1.txt
+		git s
+		git checkout doc							doc doesn't contain i1.txt, Repo becomes clean and the info about the deleted file is lost
+													If you switch back to info branch again, i1 will be resurrected
+		
+		If you would remove m2 in this example, the info that the file was deleted was preserved because m2 exists in every branch
+		
+Switching branches in a dirty respository with conflicts
+--------------------------------------------------------
+
+You modified the working directory and want to commit changes in different branch.
+Your changes collide with the branch you want to switch to. Checkout will not be allowed.
+
+		git simple-commit m1 m2 m3 						3 files in master branch
+		git checkout -b doc master
+		git simple-commit d1 d2 d3						3 files in doc branch
+		git checkout -b info master
+		git simple-commit i1 i2 i3
+		git checkout info								used branch name as revision --> not in detached state
+		git foo > i1.txt								modify
+		git s											_M i1.txt (not staged)
+		git checkout master								not allowed because i1.txt is not present in master branch --> changes cannot be preserved
+		
+Assume that modifications are important --> you want to preserve and commit them in master branch. 3 approaches possible:
+
+		- stash changes for a while, change branch, and then retrieve changes
+		- merge changes with branch you switched to during checkout
+		- commit in current (wrong branch) and then move your revision to appropriate branch
+		
+	Solution 1: Stashing uncommitted changes
+	
+		git stash										save current state of staging area and working dir. --> repo becomes clean. If you want to 
+														stash untracked files, first add them with git add -A
+														working dir now reflects latest revision in info branch
+														modifications to i1.txt are stored in a temporaty area = stash
+		git checkout master								swithc branch, is possible because repo is clean
+		git stash pop
+		
+	Solution 2: merging changes during checkout
+	
+		git checkout -m master 							merges during branch switch
+														git checkout -f master --> your changes are thrown away
+		
+	Solution 3: committ in wrong branch and move revision to appropriate branch
+	
+		git commit -m "..."
+		git checkout master
+		git cherry-pick doc								copy the mentioned revision from doc branch
+		git checkout doc
+		git reset --hard HEAD~
+		
+Deleting local branches
+-----------------------
+
+		git simple-commit m1 m2 m3 						3 files in master branch
+		git checkout -b doc master
+		git simple-commit d1 d2 d3						3 files in doc branch
+		git checkout -b info master
+		git simple-commit i1 i2 i3
+		git checkout doc
+		git branch -d master							delete the master branch
+		git branch -d info								not possible because info contains revisions that are not in doc = not merged into doc
+		
+		git branch -d [branch-name]						deletes the branch if it is merged into current branch
+		
+		git branch -D [branch-name]						deletes even if it is not merged into current branch
+		
+		
+		
+!! This way you can remove ordinary local branches and local tracking branches.
+To remove all remote tracking branches: git remote -rm 
+To remove 1 remote tracking branchf(origin/doc): git branch -d -r origin/doc   --> will be recreated after the next fetch command
+
+Using branch as a backup
+------------------------
+
+You have to implement a new feature. Do it in a new branch. When you realize the feature is not working, return to state just before the feature 
+was started.
+
+	git checkout -b feature							create not branch and switch to it
+	git simple-commit one two three					repo is clean now
+	git checkout master	
+	git branch -D feature
+	
+Renaming a branch
+-----------------
+
+	git branch -m [old-name] [new-name]				
+	git branch -M [old-name] [new-name]				if new name already exists, it will be overwritten (existing will be lost)
+	

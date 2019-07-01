@@ -1,0 +1,185 @@
+Merging branches
+================
+
+Fixes or new features are typically developed in a seperate branch. Sooner or later the work is 
+finished and you want to incorporate it in the main line of development. This can be done with 2 
+techniques:
+		merging:		git merge
+		rebasing:		git rebase
+		
+In the examples we will perform merging in clean repo's (= do not contain uncommitted or untracked files)
+
+In more real life scenario's, next to merging resolving conflicts comes into play. Will be discussed in a 
+later chapter.
+
+We will study 3 cases of merging:
+
+	- a fast-forward
+	- merging 2 diverged branches
+	- merge of multiple diverged branches
+	
+Implementing a new feature in a branch
+--------------------------------------
+
+Situation: we have a clean repo with only 1 branch named master. A new feature is implemented in a new 
+branch named feature.
+
++ we can delete the branch is it turns out the feature is not good.
+
+	git simple-commit m1 m2 m3
+	git checkout -b feature
+	git simple-commit f1 f2 f3
+	
+The master branch is fully merged into the feature branch.
+
+Fast-forward branches
+---------------------
+
+Now we want the work in the feature branch be merged into the master branch. After this, the feature and 
+master branch will both point to f3.
+
+	git s							##master	(on the master branch)
+									m3
+									m2
+									m1
+	git merge feature				operation will be carried out as a fast-forward
+(1)	ls								master branch now contains m1.txt m2.txt m3.txt f1.txt f2.txt f3.txt
+	
+All revisions of master branch are contained in the feature branch = master branch is merged into 
+feature branch
+In this case, the merge command will move the master branch' pointer to the place referenced by the 
+feature branch = fast-forward
+2 branches now point to the same commit
+no new commits are created
+
+If we alternatively try to merge the master branch into the feature branch, we would 
+get 'Already up to date' message:
+
+	git checkout feature
+	git merge master
+	
+Delete the feature branch after merge is done:
+
+	git branch -d feature
+	
+Undoing fast-forward
+--------------------
+
+When we continue with (1), git reflog would output:
+
+	0deae94	HEAD@{0}:	merge feature: Fast-forward
+	757d501 HEAD@{1}:	checkout: moving from feature to master
+	0deae94	HEAD@{2}:	checkout: moving from feature to feature
+	...
+	
+So we can do:
+
+	git reset --hard HEAD@{1}
+	
+Developing in parallel deverged branches
+----------------------------------------
+
+Situation: You have just created a branch that contains a new feature of your application. You are not sure however that the work 
+on the feature branch is finished. Meanwhile, you want to continue your work in the master branch so you switch to the master and 
+create some new revisions.
+
+	git simple-commit m1 m2 m3
+	git checkout -b feature
+	git simple-commit f1 f2 f3
+	git checkout master
+	git simple-commit m4 m5
+	
+The work in the 2 branches has continued in parallel. 2 branches master and feature are diverged.
+It is not possible to do a fast-forward merge in this situation. You can check this with the following command:
+
+	git merge --ff-only feature		--ff-only indicates to only perform a merge in case of a fast-forward --> we will get 'Not possible to fast-forward ...'
+
+With the extra parameter, we can make sure the merge operation is carried out as a fast-forward. If not possible, merge is aborted.
+
+!!To perform a merge of diverged branches as a fast-forward, us git rebase
+
+Merging diverged branches
+-------------------------
+
+	git merge feature					additional revision is created = merge commit
+	ls									m1.txt m2.txt m3.txt m4.txt m5.txt f1.txt f2 f3.txt
+	
+Every commit can be classified as either:
+
+		non-merge commit		commit with exactly one parent
+		merge commit			commit with 2 or more parents
+		
+	git log --oneline --merges										outputs only merge commits
+	git log --oneline --no-merges									outputs only non-merge commits
+	git log --oneline --max-parents=X --min-parents=Y				set the expected minimal and maximal number of parents
+	
+[REVISION]^[n] points to the n-th parent of the commit identified with [REVISION]
+	master^1		points to revision m5
+	master^2		points to revision f3
+	
+[REVISION]~ [REVISION]~1 [REVISION]^ [REVISION]^1 are equivalent
+
+with 'git merge branch-name' the current branch (the one you are on) is the branch you merge into, branch-name is the branch merged 
+								in the current branch. 
+								The current branch's tip revision will become the first parent of a merge commit, the tip revision of the branch you 
+								merge in will become the 2nd parent of the merge commit
+								The branch with name branch-name will not change
+								
+Things can be undone:
+
+	git reset --hard master^
+	git reset --hard master~
+	
+Avoid a fast forward merge
+--------------------------
+
+	git simple-commit m1 m2 m3
+	git checkout -b feature
+	git simple-commit f1 f2 f3
+	
+	git merge --no-ff feature				with the --no-ff option, we force the creation of a merge commit even if the merge can be performed as a
+											fast-forward
+											
+Diverging multiple branches
+---------------------------
+
+	git branch a
+	git branch b
+	git branch c
+	git branch d
+	
+	git simple-commit m1 m2 m3
+	git checkout master
+	git simple-commit m4 m5
+	
+	git checkout a
+	git simple-commit a1 a2
+	
+	git checkout b
+	git simple-commit b1 b2
+	
+	git checkout c
+	git simple-commit c1 c2
+	
+	git checkout d
+	git simple-commit d1 d2
+	
+	git checkout master
+
+Merging multiple branches
+-------------------------
+
+git merge a b c d				create a new commit with label 'Merge branches 'a' 'b' 'c' 'd' into master
+
+
+now we can use master^1 (master parent) master^2(branch a parent) master^3(branch b parent) master^4 master^4
+The merging of many branches can be undone:
+
+	git reset --hard master^
+	
+We could also do 4 different merges to get the same result, only difference would be that we would have 4 merge commits instead of one:
+
+	git merge a
+	git merge b
+	git merge c
+	git merge d

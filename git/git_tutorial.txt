@@ -1,0 +1,297 @@
+Git configuration
+=================
+System wide: 	
+	Location
+				/etc/gitconfig	(Linux)
+				Program Files\Git\etc\gitconfig (Windows)
+	Command
+				git config --system
+				
+User level:		
+	Location
+				~/.gitconfig
+				$HOME\.gitconfig
+				
+	Command
+				git config --global
+				
+Project level:	
+	Location
+				my_project/.git/config
+				
+	Command
+				git config
+				
+Examples
+	git config --global user.name "Tom Van den Eynde"
+	git config --global user.email "tom.vandeneynde@gmail.com"
+	
+	git config --list
+	git config user.name
+	git config user.email
+	
+	git config --global core.editor "notepad++.exe"
+	git config --global color.ui true
+
+Help
+====
+
+git help
+
+git help <command>
+
+Initializing a repository
+=========================
+
+Tell git to start tracking things in this project
+
+	git init		--> .git folder where git stores all its tracking information (by removing this folder, git is no 
+						longer tracking your project)
+						
+	git add .							--> add all changes made to this project
+	git commit -m "Initial commit"		--> commit changes to the repository with a message
+	
+	git log								--> log of previous commits 
+	
+Architecture
+============
+Git has a 3-tree architecture:  - working copy
+												git add file.txt
+								- staging area
+												git commit file.txt
+								- repository
+
+Git workflow
+============
+First we have a new file (or files, git works with change sets!)
+git add file.txt			--> add the file to the staging area
+git commit -m "..."			--> add file to the repository
+
+HEAD pointer
+============
+A pointer to reference a specific commit (snapshot/ change set) in the repository
+Always points to the "tip" of current branch in repository (!=staging area, != working directory) 
+	- last state of repository
+	- points to parent of next commit
+	- points to the place where writing commits take place
+In case you have more branches (ex. master, branch1, ...), HEAD will point to the tip of the branch currently checked out
+	--> If you check out another branch, HEAD will point to the tip of that branch!
+	
+Look in my_project\.git\HEAD, it contains something like:  ref: refs/heads/master This means it points to the current branch
+which is master in this case.
+Then look in my_project\.git\refs\heads\master which contains something like: 7aa195b... This is the SHA of the last commit, the 
+tip of the current branch
+
+git status		reports the difference between working directory, staging area and the repository
+
+git add	file_name 			--> start tracking file
+git reset HEAD file_name	--> remove file from staging area (unstage, stop tracking file)
+
+git diff					--> compares what is in the repository (=with the version head is pointing at) versus
+										what is in our working directory
+
+			diff --git a/third_file.txt b/t
+			index 9bb9003..38864b0 100644
+			--- a/third_file.txt					//this is what is in the repository
+			+++ b/third_file.txt					//this is what is in the new version
+			@@ -1 +1 @@								//indicates which lines where are looking at
+			-dsqsdfdsqf								//old line(s)	!!differences are shown on a line-by-line base
+			\ No newline at end of file				//do not worry to much about this, tells that no line after last line was added
+			+dsqsdfdsqfdfqsfsqdf					//new line(s)
+			\ No newline at end of file
+ 
+git diff --staged				--> compares what is in the repository versus what is in our staging area
+								--> --chached instead of --staged in versions before 1.7 but still works
+
+git add .  +  git commit -m "..."  can be combined in one command:
+	git commit -a -m "..."
+		- everything in your working directory will be grabbed
+		- new files (untracked) or deleted files are not included 
+Removing a file
+===============
+We are going to see how to remove a file that was already committed.
+
+1. Remove manually  (=do it by means of our operating system and then tell git about it)
+------------------
+
+Delete the file by hand (ex. windows explorer) that is already committed		
+
+git status 							--> tells us it has a change (a deletion) not staged yet
+git rm file_to_delete				--> oposite of git add file_to_delete (we will not have autocompletion because file is 
+											already in trash bin
+git status							--> tells us that de deletion is staged
+git commit -m "..."					--> deletion is in repository
+
+2. Remove by git	(= let git do the work)
+----------------
+
+git rm file_to_delete				--> file is not in trash bin (vanished)
+git status							--> tells us deletion is already in staging area
+git commit -m "..."					--> deletion is in repository
+	
+Moving a file
+=============
+
+1. Move manually (=do it by means of our operating system and then tell git about it)
+----------------
+
+Rename the file by hand that is already committed
+
+git status							--> tells us that a file was deleted AND that there is a new file that is untracked
+git rm first_file
+git status							--> tells us now that file was renamed
+git commit -m "..."
+
+2. Move by git
+--------------
+
+git mv old_file_name new_file_path/new_file_name 
+git status							--> change is already in the staging area
+git commit -m "..."
+
+Undo changes that are in working directory
+==========================================
+
+git checkout <named_thing>			--> git makes working directory look like how named thing looks in the
+										repository
+			git checkout filename	--> file will be checked out
+			git checkout foldername --> folder will be checked out
+			git checkout branchname --> branch will be checked out
+			
+					Problem: what if foldername = branchname --> solution is to use -- to indicate that we want 
+								to stay on the current branch!
+								
+							ex: git checkout -- index.html
+							
+Undo changes that are in staging area (=unstage)
+=====================================
+
+when you don't want to loose the change --> move it back to the working directory
+	ex. you have made a lot of changes but you want to commit them logically and in order to do that, you have 
+		staged one (or more files) to much
+		
+	git reset HEAD <file>		--> go look at the last commit (HEAD pointer) and reset to that version
+
+Undo changes made to the repository (= undoing commits)
+===================================
+
+Edit our very last commit (where HEAD points to)
+-------------------------
+
+Commits are identifies by an SHA. Every commit contains a SHA reference to the previous (parent) commit.
+As a consequence, you can't change a commit once done.
+Git lets us edit the last commit (nothing depends on it yet). It is the commit which HEAD points to.
+Therefore we use the 'amend' option when we do a git commit 
+
+Can be used for:
+
+- modifying the contents of a file that was in the last commit
+- change the commit message
+
+with git log you can verify that everytime we use amend, the last commit is altered (SHA, date) 
+
+Undo previous changes (checkout files from a certain revision)
+---------------------
+If you want to change what was done in previous commits --> just make new commits to undo that changes/work
+To undo the work, you have 2 options:
+
+- do it manually
+- checkout files from a certain revision (1)
+
+(1) First find out which commit is the immediate predessor (parent) of the commit that contains the change.
+Use that SHA to do a checkout:
+
+git checkout SHA_of_parent -- file_name			--> -- to indicate that we are not talking about a branch
+
+with git status you'll see that the checkout is put into the staging arae straightaway
+It you want to compare: git diff --staged
+
+Now we can do a commit and it is a good habit to give it a message like "This commit reverts SHA .... from prev. 
+commit"
+
+Mirror a commit (revert a commit)
+===============
+
+Suppose you have a commit 
+Revert will take all the changes in the commit and will flip them around (mirror image). 
+	- Files that were removed, will be put back in place again
+	- Files that were added, will be removed
+	- Changes will be reverted (what was modified, will be changed back to it's previous stage)
+	
+	git revert SHA		--> we get a popup where we can add a commit message
+	
+After this command, a new commit is actually made. If we do not want the commit to actually already happen, we 
+can use the -n (--no-commit) option which causes the changes to be staged but not yet committed. So you can make 
+additional changes and do the commit yourself.
+
+! If you have to revert a situation that has become complex (in the mean time files have moved, things are renamed, 
+...), you 'll have to do a merge between the current branch and the changes
+
+Undo multiple commits (powerful but dangerous)
+=====================
+
+Command that we will use is:
+
+	git reset			allows us to specify were the head pointer should point to and that is were git will 
+						be recording from there-on. (normally this is done by git so that HEAD always points 
+						to the last commit of the branch)
+						
+						= rewind to a certain commit and from there-on we will start recording, overwriting what-
+						ever came after that commit
+						
+Git reset will always move the HEAD pointer but there are 3 options:
+
+	--soft				does not change the staging area or working directory
+						(= move the HEAD pointer and do nothing else --> the safest option)
+						
+						the repository will be set back to an earlier stage but the staging area and working 
+						directory contain files in their later revised state
+						
+						if we do a diff, it will tell us about all these changes
+						
+						It is easy to undo this reset by setting the head pointer
+						to the original last commit (SHA)
+						
+	--mixed				the default option
+						in between soft and hard
+						moves the head pointer to the specified commit
+						also changes the staging area to match the repository
+						does not change the working directory (all changes that were in later commits are still 
+						in the working directory)
+						
+						Undo this with git reset --mixed SHA_of_last_commit
+						!!!Unstage a file = git reset HEAD <file>
+						
+	--hard				moves the head pointer to the specified commit
+						also changes the staging area to match the repository
+						also changes the working directory to match the repository
+						any changes that were made later are gone and no longer exist in repo, staging area or
+						working directory
+						
+						this option is good for when it went completely wrong and you want to reset to a specific
+						point in time were you don't mind about loosing changes after that point
+						
+						We can still go to later commits
+						
+						git reset --hard SHA   BUT once you have performed a new commit after the
+						first reset --hard, you no longer are able to go back to lost commits!
+	
+Remove a lot of untracked files
+===============================
+
+This is done by:
+
+	git clean
+	
+This command needs options, -n or -f are possible
+
+	-n			performs a test run, logs on console which files it would
+				remove
+	-f			forces it to run
+	
+	!!! this command will not remove files in the staging area
+	If you want to do that:
+	
+	git reset HEAD <file(s)_in_staging_area>
+	git clean -f
+	

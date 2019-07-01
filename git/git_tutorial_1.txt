@@ -1,0 +1,40 @@
+Ignoring files
+==============
+
+To avoid that files become available for tracking = git sees them as 
+untracked files, use my_project/.gitignore (provide git with a set of rules
+that it can use to know which files to ignore
+
+	- list of files, one line for each file
+	- very basic regular expressions
+		? [characters] [0-9]
+	- negate expressions (=not ignore this)
+	- ignore all files in a directory with a trailing slash
+	- comments begin with #
+	- blank lines are skipped
+	
+	ex.:	*.php
+			!index.php (=not ignore this one)
+			assets/videos/
+	
+Globally ignore files:
+	- ignored in all repositories
+	- settings not tracked in repository
+	- user-specific instead of repository-specific (mac user <--> windows user)
+	
+Ideas on what to ignore
+-----------------------
+
+- compiled source code
+- packages and compressed files (disk images, *.gz, *.zip, *.7z, ...)
+- logs and databases
+- operating system generated files
+- user uploaded assets (images, PDF"s, videos)
+
+See also
+
+https://help.github.com/articles/ignoring-files
+https://github.com/github/gitignore
+
+- 		
+			

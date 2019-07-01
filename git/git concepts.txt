@@ -1,0 +1,47 @@
+.git/HEAD				
+
+	- a textfile that points to the current revision	
+	- so git knows which revision you recently checked out
+	- sis also used as a parent revision during your next commit
+	
+	the reference stored in .git/HEAD is written in one of two forms:
+		- as a symbolic reference to the branch --> when you are on a branch
+		- as a SHA-1 --> when you are in detached head state
+		
+ex. ref: refs/heads/doc
+	means that your current revision is the one pointed to by the branch named doc
+	
+Branches are stored in the .git directory on one of two different formats:
+	- Loose format
+		These branches are stored within the .git/refs/heads directory
+		Every branch in a seperate file
+		
+		In the symbolic reference ref: refs/heads/xyz, the part refs/heads/xyz is the path 
+		to the file .git/refs/heads/xyz which contains the SHA-1 name of the latest revision in branch xyz
+		
+	- Packed format
+		Many references, such as 	ref: refs/heads/xyz, are stored in a single file .git/packed-refs
+									ref: refs/heads/foo
+									ref: refs/heads/bar
+		In a newly initialized repo, the file .git/packed-refs doesn't exist. This means that by default the 
+		references are initially stored in loose format
+		
+When you init a new repo, it doesn't contain any revisions- its database is empty. 
+The .git/HEAD contains the entry ref: refs/heads/master
+The folder .git/refs/heads is empty- the file refs/heads/master doesn't exist
+The new repo contains a single branch named master, which doesn't contain any revisions
+
+After you create your first revision, the .git/HEAD does not change- it still contains the same entry pointing
+to .git/refs/heads/master
+Now .git/refs/heads/master exists and contains the SHA-1 of the revision just created
+This can be checked with following commands:
+	
+	git log --pretty=oneline
+	cat .git/refs/heads/master
+	
+In this situation, branch(es) are stored in loose format.
+If you want to convert the format of all references from loose to packed format:
+
+	git pack-refs --all
+	
+Now, .git/refs/heads directory is empty.

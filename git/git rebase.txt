@@ -1,0 +1,82 @@
+Rebasing branches
+=================
+
+You can join 2 different development histories with:
+
+	git merge
+	git rebase
+	
+Rebasing is converting divergent branches into linear history.
+= automatic cherry-picking operation for moving a series of commits from one place on the graph to another.
+
+Rebasing divergent branches
+---------------------------
+
+	git simple-commit m1 m2 m3
+	git checkout -b feature
+	git simple-commit f1 f2 f3
+	git checkout master
+	git simple-commit m4 m5
+	
+	git checkout feature
+	git rebase master						rebase the feature branch onto the master (=apply changes introduced by the commits from the 
+											current branch at the top of another branch, in this case the master)
+	git checkout master
+	
+We are not actually moving revisions from one place to another (is not possible). We are creating new revisions that will have the same comment 
+and introduce tha same changes (will have different SHA-1 names)
+The original revisions f1, f2 and f3 are left intact but are not referred to by any branch = become dangling revisions but remain unchanged in the 
+database as long as you don't expire the reflog and prune the database.
+By pointing again to the f3 revision, the rebasing will be undone.
+
+	git log --walk-reflogs --grep=f3 --pretty="%h %s %cd" | sort | uniq				find SHA-1 of f3 commit
+	git reset --hard [SHA-1]														change feature branch
+	
+	
+The same (= the undo) can be accomplished with the following 2 commands:
+	
+	git branch -D feature															delete feature branch
+	git checkout -b feature [SHA-1]													create a new feature branch pointing to the desired revision
+																					-b creates a branch only if it doesn't already exists
+	
+Or combine them together
+
+	git checkout -B feature [SHA-1]													-B forces to create a branch, even if it already exists (override 
+																					existing branch)
+																					
+In general: git rebase a b			if you skip b, HEAD will be used 
+
+	To rebase the feature branch onto the master branch:
+	
+		git checkout feature		make feature the master branch
+		git rebase master			
+		
+		or
+		
+		git rebase master feature	your current branch is not important
+		
+Joining devergent branches into linear history
+----------------------------------------------
+	
+	git simple-commit m1 m2 m3
+	git checkout -b feature
+	git simple-commit f1 f2 f3
+	git checkout master
+	git simple-commit m4 m5
+	
+can be done in 2 steps:
+
+(1)	git rebase master feature					rebase the feature branch onto the master branch
+(2)	git rebase feature master					rebase the master branch onto the feature branch
+	
+After (1) the master branch stil points to m5, we have to fast-forward to feature branch (revision f3)
+Fast forwaring can be done with either:
+
+	git merge
+	git rebase
+	
+	So (2) could be replaced with:		git checkout master
+										git merge feature
+										
+Difference with first recipe is that we now move the pointer of the master branch to were feature branch points to.
+
