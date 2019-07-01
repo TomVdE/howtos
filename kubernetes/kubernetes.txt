@@ -1,0 +1,275 @@
+kubectl is used to deploy and manage applications on a kubernetes cluster 
+	-> get cluster information
+	-> get a list of other nodes in the cluster
+	-> ...
+	
+kubectl run hello-minikube			= deploy an application on the cluster 
+										--> creates a pod and deploys a docker image in it
+kubectl run nginx --image=nginx		first nginx is the name of the pod, 2nd nginx is the name of
+										the image
+
+kubectl cluster-info				= used to get information about the cluster 
+
+kubectl get nodes					= list all the nodes in the cluster
+
+kubectl get pods					= list of pods in our cluster
+
+kubectl get nodes					= list of all noded in the cluster
+	Output:
+	NAME			STATUS			ROLES			AGE			VERSION
+	kubemaster		Ready			master			7m			v1.9.4
+	kubenode1		Ready			<none>			4m			v1.9.4
+	kubenode2		Ready			<node>			4m			v1.9.4
+	
+kubectl run nginx --image=nginx
+	first nginx = the name of the container
+	second nginx = the name of the image that has to be downloaded from docker hub
+	
+kubectl get pods
+	Output is now:
+	NAME					READY			STATUS			RESTARTS		AGE
+	nginx-8586cf59-wf5r4	1/1				Running			0				1m
+	
+kubectl	describe pods			detailed info about pods, on which node it is running, name of the 
+									image, events
+	
+kubectl get pods -o wide		--> 2 extra columns: IP and NODE
+										each pod gets its own ip address in kubernetes
+										
+
+pod-definition.yml:
+===================
+apiVersion: v1
+kind: Pod
+metadata:
+	name: myapp-pod
+	labels:
+		app: myapp
+		type: front-end
+spec:
+	containers:
+		- name: nginx-container
+		  image: nginx
+====================
+
+kubectl create -f pod-definition.yml		= kubernetes creates the pod
+kubectl get pods
+	Output
+	NAME			READY			STATUS		RESTARTS			AGE
+	myapp-pod		1/1				Running		0					20s
+	
+kubectl describe pod myapp-pod				= detailed information about the pod: 
+													information about the pod, 
+													when it was created, 
+													what labels are assigned to it, 
+													what docker containers are part of it, 
+													the events associated with that pod
+
+rc-definition.yml:
+==================
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: myapp-rc
+  labels:
+    app: myapp
+    type: front-end
+
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx
+  replicas: 3
+==================													
+kubectl create -f rc-definition.yml	
+kubectl get replicationcontroller			= view list of replication controllers created
+		NAME		DESIRED		CURRENT		READY	AGE
+		myapp-rc	3			3			3		19s
+kubectl get pods
+		NAME			READY		STATUS		RESTARTS	AGE		--> all pods names start with 
+		myapp-rc-41vk9	1/1			Running		0			20s				myapp-rc indicating they 
+		myapp-rc-mc2mf	1/1			Running		0			20s					are started by the 
+		myapp-rc-px9pz	1/1			Running		0			20s					replication controller myapp-rc
+
+replicaset-definition.yml
+=========================
+version: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels:
+    app: myapp
+    type: front-end
+
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+      type: front-end
+=========================
+kubectl create -f replicaset-definition.yml
+kubectl get replicaset
+	NAME				DESIRED		CURRENT		READY		AGE
+	myapp-replicaset	3			3			3			20s
+kubectl describe replicaset
+kubectl get pods
+	NAME					READY		STATUS		RESTARTS	AGE
+	myapp-replicaset-9dd19	1/1			Running		0			20s
+	myapp-replicaset-9jtpx	1/1			Running		0			20s
+	myapp-replicaset-hq84m 	1/1			Running		0			20s
+	
+kubectl delete replicaset myapp-replicaset					also deletes all underlying PODs
+kubectl delete pod myapp-replicaset-9jtpx					--> replicaset will create a new pod
+kubectl create -f pod-definition.yml						--> replicaset will immediately delete the
+																pod because it has the same label
+If you want to increase the number of pods to 6:
+- option 1:
+		alter replicaset-definition.yml and change replicas: 6
+		use the following command:
+			
+			kubectl replace -f replicaset-definition.yml
+			
+- option 2:
+		kubectl scale --replicas=6 -f replicaset-definition.yml
+		or
+		kubectl scale --replicas=6 replicaset myapp-replicaset
+		
+you can also scale down the replicaset:
+		kubectl scale --replicas=3 -f replicaset-definition.yml
+		
+kubectl get all				list all of the objects in the cluster
+
+demo
+====
+kubectl create -f replicaset-definition.yml
+kubectl get replicaset									see the list of replicasets
+kubectl describe replicaset
+kubectl get pods
+kubectl delete pod myapp-replicaset-9jtpx
+kubectl get pods -o wide
+kubectl replace -f replicaset-definition.yml
+kubectl get replicaset
+kubectl describe replicaset
+kubectl get pods 
+kubctl scale --replicas=3 -f replicaset-definition.xml
+cat replicaset-definition.xml
+
+deployment-definition.yml
+=========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  labels:
+    app: myapp
+     type: front-end
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+      type: front-end
+=========================
+
+deployments support rolling updates, rollbacks, pausing and resuming updates
+
+kubectl create -f deployment-definition.yml				
+kubectl get deployments
+kubectl describe deployment 							
+kubectl get replicaset								the deployment automatically creates a replicaset
+kubectl get pods									the replicaset ultimately creates the pods
+kubectl get all
+
+deployments are not so different from replicasets but a new kubernetes object is created: deployment
+
+demo
+====
+Rollout: 
+	kubectl rollout status deployment/myapp-deployment
+	kubectl rollout history deployment/myapp-deployment
+	
+	
+Update strategy:
+	recreate: first destroy all replica instances of your webapplication and then create 
+					new instances with the new versoin of the webapplication
+					
+					- there is application downtime!!! --> not the default update strategy!!!
+					
+	rolling update:	first destroy few of the replicas en create new ones, next do the same with the	
+					other replicas
+
+					--> is the default update strategy
+
+What is updating your deployment?
+	- updating your application's version
+	- updating the version of docker containers used
+	- updating the labels
+	- updating the number of replica's
+	- ...
+	
+How to update your deployment?
+	- first update the deployment-definition.yml file		ex. change image: nginx:1.7.0 to nginx:1.7.1
+	- then apply the changes
+			
+			kubectl apply -f deployment-definition.yml	==> a new rollout is triggered 
+															and a new revision of the deployment is created
+
+	alternative:
+		kubectl set image deployment/myapp-deployment nginx=nginx:1.7.1
+		
+Rollback:
+	kubectl rollout undo deployment/myapp-deployment
+
+demo
+====	
+kubectl get all
+kubectl create -f deployment-definition.yml
+kubectl rollout status deployment/myapp-deployment
+kubectl rollout history deployment/myapp-deployment
+kubectl get deployments
+kubectl apply -f deployment-definition.yml
+kubectl set image deployment/myapp-deployment nginx=nginx:1.9.1
+kubectl rollout status deployment/myapp-deployment
+kubectl rollout history deployment/myapp-deployment
+kubectl rollout undo deployment/myapp-deployment	
+		
+service-definition.xml
+======================
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service-definition
+
+spec:
+  type: NodePort 	# or ClusterIp, or LoadBalancer
+  ports:
+    - targetPort: 80
+      port: 80
+      nodePort: 30008	  
+  
