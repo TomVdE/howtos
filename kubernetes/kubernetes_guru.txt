@@ -1,0 +1,62 @@
+deployment.yml
+==============
+apiVersion: apss/v1beta2
+kind: Deployment
+metadata:
+  name: tomcat-deployment
+spec:
+  selector:
+    matchLabels:
+      app: tomcat
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tomcat
+    spec:
+      containers:
+      - name: tomcat
+        image: tomcat:9.0
+        ports:
+        - containerPort: 8080
+==================
+
+
+kubectl apply -f ./doployment.yml                           #use given yml file and apply it on our cluster
+kubectl expose deployment tomcat-deployment --type=NodePort #expose the pod to the external world as a service
+
+
+kubectl expose <type name> <identifier/name> [--port=external port] [--target-port=container-port] [-type=service-type]
+                expose a port for a given deployment, pod or other resource
+                if you omit --port=external port, k8s will choose a random port
+                type can be     NodePort            = externally available IP address
+                                LoadBalancer        = loadbalancer
+                                ClusterIP           = internal only service
+
+kubectl port-forward <pod name> [LOCAL_PORT:]REMOTE_PORT]
+    forwards one or more local ports to a pod on the remote host that kubectl is connecting to
+    ex:
+        kubectl port-forward tomcat-deployment-7bd7889564-717n2 5000:6000 (out
+                 maps local port 5000 to port 6000 on the remote cluster
+
+kubectl attach <pod name> -c <container>
+    attach to a pod to view its output (= attach to a process that is already running inside an existing container)
+    ex:
+        kubectl attach tomcat-deployment-7bd7889564-717n2
+
+kubectl exec [-it] <pod name> [-c CONTAINER] COMMAND [args ...]
+    execute a command in a container
+    -i : pass stdin to the container
+    -t : specify stdin is a TTY
+    ex:
+        kubectl exec -it tomcat-deployment-7bd7889564-717n2 bash
+
+kubectl label [--overwrite] <type> KEY_1=VAL_1 ...
+    updates the labels on a resource (= label a k8s object)
+    ex:
+        kubectl label pods tomcat-deployment-7bd7889564-717n2 helthy=false
+
+kubectl run <name> --image=image
+    run a particular image on the cluster (to run it quick and dirty, if you do not need a reproducable way)
+    ex:
+        kubectl run hazelcast --image=hazelcast/hazelcast --port=5701 (extra options are also possible)

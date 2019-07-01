@@ -2,6 +2,10 @@ kubectl is used to deploy and manage applications on a kubernetes cluster
 	-> get cluster information
 	-> get a list of other nodes in the cluster
 	-> ...
+	=> provides access to nearly every Kubernetes
+	=> primary command line access tool
+
+
 	
 kubectl run hello-minikube			= deploy an application on the cluster 
 										--> creates a pod and deploys a docker image in it
@@ -10,17 +14,26 @@ kubectl run nginx --image=nginx		first nginx is the name of the pod, 2nd nginx i
 
 kubectl cluster-info				= used to get information about the cluster 
 
+kubectl get pods					= list of pods in our cluster (= list all pods in all namespaces)
+kubectl get pods -o wide		    --> 2 extra columns: IP and NODE
+										each pod gets its own ip address in kubernetes
+kubectl get pods [pod name]
+
 kubectl get nodes					= list all the nodes in the cluster
-
-kubectl get pods					= list of pods in our cluster
-
 kubectl get nodes					= list of all noded in the cluster
 	Output:
 	NAME			STATUS			ROLES			AGE			VERSION
 	kubemaster		Ready			master			7m			v1.9.4
 	kubenode1		Ready			<none>			4m			v1.9.4
 	kubenode2		Ready			<node>			4m			v1.9.4
-	
+
+
+
+
+
+
+
+
 kubectl run nginx --image=nginx
 	first nginx = the name of the container
 	second nginx = the name of the image that has to be downloaded from docker hub
@@ -30,11 +43,11 @@ kubectl get pods
 	NAME					READY			STATUS			RESTARTS		AGE
 	nginx-8586cf59-wf5r4	1/1				Running			0				1m
 	
-kubectl	describe pods			detailed info about pods, on which node it is running, name of the 
-									image, events
-	
-kubectl get pods -o wide		--> 2 extra columns: IP and NODE
-										each pod gets its own ip address in kubernetes
+kubectl	describe pods			        detailed info about pods, on which node it is running, name of the
+									        image, events
+kubectl describe pod <name_of_pod>	    detailed info about only the specified pod
+
+
 										
 
 pod-definition.yml:
