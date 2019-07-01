@@ -1,0 +1,153 @@
+docker ps		= show all running containers
+docker ps -a	= show all containers, running and stopped
+docker run mysql	= run mysql image with tag latest (=default)
+docker run --name my_mysql mysql 	= run mysql image with tag latest and give it the name my_mysql
+docker logs -f bbd39cc //container name (id) 	= show the console log of the docker container in
+														follow mode
+
+docker stop bbdcc				= stop a running container
+docker stop <container name>	= stop a running container
+docker kill <container name>	= stop a running container
+docker run -p 27017:27017 -d mongo		-d parameter = run docker container as a background process
+										-p parameter = map host port on container port
+docker images		= list all docker images on your system
+docker image inspect image_name --> layers with its SHA256 hashes (image ids)
+										Also shows the LogPath in the output
+docker images -q --no-trunc  --> list of full SHA256 image ids 
+docker images --> only first 12 characters of the SHA256 hashes
+
+docker run -d centos tail -f /dev/null
+
+docker run -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=packt -e RABBITMQ_DEFAULT_PASS=publishing -d rabbitmq:3.7-management
+
+mkdir 
+
+docker run --name guru-mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -v /Users/jt/tmp/:/var/lib/mysql
+		-p 3306:3306 -d mysql
+		
+			-e = environment variable (-e MY_VAR=MY_VALUE )
+			-v = volume mapping
+			-p = port mapping
+			
+docker rm <container name>	//remove a container			
+docker kill $(docker ps -q) //kill all running containers
+docker rm $(docker ps -a -q) //delete all stopped docker containers
+docker rmi <image name> //remove a Docker Images
+docker rmi $(docker images -q -f dangling=true) //delete untagged (dangling) images
+docker rmi $(docker images -q) //delete all images
+
+docker exec -it <container name> bash //shell into a running docker container
+docker exec -it <container name> <command> //run a command in the running doker container
+
+docker run -d centeos	= docker will end when last command is executed
+docker run -d centeos tail -f /dev/null		= tail -f /dev/null will never end
+docker exec -it nervous_shtern bash --> run bash shell of container with name nervous_shtern
+
+docker network ls		= list the networks
+docker volume ls		= list the volumes
+
+docker history <image name>		shows all the layers
+
+Push to Docker Hub
+==================
+
+docker tag b29091b tvde/example1:1.01
+docker login --username=
+
+Docker House keeping
+====================
+3 area's
+	- containers
+	- images
+	- volumes
+	
+containers
+----------
+Kill all running docker containers
+	docker kill $(docker ps -q)
+		-q	means quiet mode
+		the $() command will pass in a list of docker containers into the kill command
+		
+Delete all stopped docker containers
+	docker rm $(docker ps -a -q)
+	
+images
+------
+Remove a docker image
+	docker rmi <image name>
+	
+Delete untagged (dangling) images
+	docker rmi $(docker images -q -f dangling=true)
+	
+Delete all images
+	docker rmi $(docker images -q)
+	
+volumes
+-------
+Once a volume is no longer associated with a container, it is considered dangling
+To remove all dangling volumes:
+	docker volume rm $(docker volume ls -f dangling=true -q)
+	
+NOTE: 
+Images Tag Names
+================
+
+
+
+format of full tag name is [REGISTRYHOST/][USERNAME/]NAME[:TAG]
+
+	- Registry host: 'registry.hub.docker.com'
+	- Tag: 'latest' is default
+	- example: registry.hub.docker.com/mongo:latest
+
+	
+Dockerfile example
+==================
+FROM ubuntu:14.04
+RUN apt-get update && apt-get install -y \		--> by chaining these commands, no extra layers are created
+	git \
+	curl
+
+RUN yum install -y java		--> install java (-y = default answer to qestions is yes)
+
+VOLUME /tmp					--> here spring boot will store temp files
+COPY abc.txt /src/abc.txt	--> copy file to /src folder
+ADD /spring-boot-web-0.0.1-snapshot.jar myapp.jar --> copy the snapshot artifact next to the dockerfile
+														Add not just only copy files, but can also 
+														download a file from internet and copy to container
+RUN sh -c 'touch /myapp.jar' --> updates the date on the jar file, important to static resources like images
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/myapp.jar" ] --> run our jar
+
+
+==> use copy unless you're sure you need ADD
+
+
+docker build -t spring-boot-docker .				= build a docker IMAGE from the folder that contains
+														the Dockerfile
+													= -t is tag this image
+
+docker build -t spring-boot-docker . --no-cache=true	complete rebuild, without using the cache													
+docker run -d -p 8080:8080 spring-boot-docker		= -d to run the container in the background (deamon)
+													= spring-boot-docker is the tag we used in the 
+														docker build command
+
+
+
+
+docker-compose
+==============
+
+docker-compose up (-d)
+docker-compose logs -f rabbitmq
+
+docker-compose build
+
+docker -f docker-compose.yaml -f docker-compose-dev.yaml config		= show all config combined
+docker -f docker-compose.yaml -f docker-compose-dev.yaml up
+docker -f docker-compose.yaml -f docker-compose-dev.yaml up -d
+docker -f docker-compose.yaml -f docker-compose-dev.yaml ps
+docker -f docker-compose.yaml -f docker-compose-dev.yaml stop
+docker -f docker-compose.yaml -f docker-compose-dev.yaml down		= stops containers and removes them
+																		local data in container that is 
+																		not mounted will be gone
+ 
