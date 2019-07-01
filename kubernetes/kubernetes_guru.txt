@@ -60,3 +60,10 @@ kubectl run <name> --image=image
     run a particular image on the cluster (to run it quick and dirty, if you do not need a reproducable way)
     ex:
         kubectl run hazelcast --image=hazelcast/hazelcast --port=5701 (extra options are also possible)
+
+See ./images/001_kubernates_architecture.jpg
+    kubelet         manages processes on an idividual node (= kubelet runs pods)
+    kube-proxy      makes sure the network services exposed by each pod on the node, can be accessed as defined in the deployment
+
+    k8s master will evaluate your deployment descriptor, decides where and how to run it and will direct kubelet on the appropriate
+            node or nodes if multiple replica's are needed
