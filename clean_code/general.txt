@@ -1,0 +1,42 @@
+Layout
+------
+
+Readable, good indentation
+
+Naming of variables
+-------------------
+
+clear, pronounceable, use nouns
+
+Naming of methods
+-----------------
+
+use verbs, be consistent (use always 'get' and don't mix 'get' and 'fetch')
+
+Vocabulary
+----------
+
+ubiquitous language
+
+Functions/methods
+-----------------
+
+as short as possible
+1 function, 1 task -> no side effects
+don't nest to deep control structures like if-else, loops, ...
+the less method arguments, the better
+    more than 3 is problematic
+        ex. Circle makeCircle(double x, double y, double radius) --> Circle makeCircle(Point center, double radius)
+avoid output arguments --> increases unreadability of your code
+if returning a result is not enough, it is an indication that your function does to much
+error handling
+    throwing exceptions = good
+    returning different status codes = bad --> results in if conditions
+
+Comments
+--------
+
+if you see bad code, refactor it instead of putting a comment in it
+never leave code commented out, instead use version control functionality
+avoid noise comments (= unneccessary comments)
+
