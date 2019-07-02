@@ -1,0 +1,15 @@
+A variable, parameter, field, method or class is no longer used (usually because it’s obsolete).
+
+Reasons
+-------
+
+Requirements changed, corrections have been made, nobody had time to clean up old code
+Can also be found in complex code blocks, when one of the branches becomes unreachable
+
+Treatments
+----------
+
+- Use good IDE to find dead code
+- In case of unnecessary class --> Inline class
+- In case of unnecessary sub- or superclass --> Collapse Hierarchy
+- To remove unneeded parameters --> Remove parameter

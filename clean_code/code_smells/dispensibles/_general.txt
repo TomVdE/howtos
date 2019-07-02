@@ -1,0 +1,13 @@
+A dispensable is something pointless and unneeded whose absence would make the code cleaner, more efficient and
+easier to understand.
+
+Dead code
+---------
+A variable, parameter, field, method or class is no longer used (usually because it’s obsolete).
+
+Speculative generality
+----------------------
+Unneeded 'what if's' are handled in the code, resulting in unused classes, methods, fields, parameters, if-else
+cases, ...
+
+
