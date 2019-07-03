@@ -261,3 +261,12 @@ K8s has 2 types of health checks to ascertain 2 different things
         kubectl apply -f ./deployment.yml
         kubectl describe deployment tomcat-deployment       --> in the output you see a Liveness and
                                                                     Readiness line for this container
+
+kubectl run mongo-exercise-1 --image=mongo --port=27017     #mongo-exercise-1 is the name of the deployment
+kubectl scale --replicas=4 deployment/mongo-exercise-1
+
+alternatives:
+    - write a deployment.yml file, use kubectl apply and use kubectl expose to expose a service
+    - write a deployment.yml file and a service.yml file and use kubectl apply on both
+    - use a K8s package manager like helm to handle the work for you
+
