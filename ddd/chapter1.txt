@@ -42,3 +42,35 @@ Popular misconceptions of DDD
     DDD != framework
     DDD != silver bullet
 
+* DDD is a develoment philosophy that is designed to manage the creation and maintenance of software written for
+complex problem domains
+
+* DDD = collection of patterns, principles, and practices which can be applied to software design to manage complexity
+
+* DDD has 2 types of pattersn
+    strategic patterns: to shape the solution --> can be useful for any application
+    tactical patterns: to implement a rich domain model --> only usefull if your model is sufficiently rich in domain
+                                                              logic
+
+* distillation of large problem domains into subdomains can reveal the core domain - the area of most value
+    teams must invest more time in the core subdomain(s)
+
+* U.L. is used to bind the analysis model to the code model in order for the dev team and domain experts to collaborate
+    on the design of a model.
+    --> Learning and creating a language to communicate about the problem domain is the process of DDD
+    --> Code is the artifact of DDD
+
+* A model is defined within a bounded context to retain it's integrity
+
+* A model is isolated from infrastructure concerns to seperate technical complexities from business complexities
+
+* When there is ambiguity in terminology for a model or multiple teams, the model can be further split and defined in
+    smaller bounded contexts
+
+* DDD focusses on       the core domain
+                        collaboration
+                        exploration with domain experts
+                        experimentation to produce a more useful model
+                        understanding of the various contexts in play in a complex problem domain
+
+* DDD is a collaboration philosophy
