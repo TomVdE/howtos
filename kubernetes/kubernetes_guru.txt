@@ -157,3 +157,48 @@ Working with deployments
                         4           <none>
 
             kubectl rollout history deployment/tomcat-deployment --revision=2
+
+Labels & selectors
+==================
+A method to keep things organized, and to help you (a human) and Kubernetes (machine) identify resources
+to act upon
+
+Labels are key/value pairs that you can attach to nearly anything in the K8s world:
+    - Deployments
+    - Services
+    - Nodes
+    - Pods ...
+
+Selectors are a way of expressing how to select objects based on their labels
+    - a simple language to define what labels match
+    - you can specify if a label equals a given criteria or if it fits inside a set of criteria
+        * equality-based
+        * set-based
+
+    ex. kubectl get nodes
+        kubectl label node <node name> key1=value1
+        kubectl describe node <node name>       --> check the labels output section
+
+        deployment.yml now has to add a nodeSelector property:
+        ==============
+        apiVersion: apps/v1beta2
+        kind: Deployment
+        metadata:
+            name: tomcat-deployment
+        spec:
+            selector:
+                matchLabels:
+                    app: tomcat
+            replicas: 4
+            template:
+                metadata:
+                    labels:
+                        app: tomcat
+                spec:
+                    containers:
+                    - name: tomcat
+                      image: tomcat:9.0
+                      ports:
+                      - containerPort: 8080
+                    nodeSelector:                       #is used to select on which nodes to deploy this container on
+                        key1: value1
