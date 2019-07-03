@@ -61,6 +61,8 @@ kubectl run <name> --image=image
     ex:
         kubectl run hazelcast --image=hazelcast/hazelcast --port=5701 (extra options are also possible)
 
+A little bit of architecture
+============================
 See ./images/001_kubernates_architecture.jpg
     kubelet         manages processes on an idividual node (= kubelet runs pods)
     kube-proxy      makes sure the network services exposed by each pod on the node, can be accessed as defined in the deployment
@@ -68,6 +70,8 @@ See ./images/001_kubernates_architecture.jpg
     k8s master will evaluate your deployment descriptor, decides where and how to run it and will direct kubelet on the appropriate
             node or nodes if multiple replica's are needed
 
+Scaling
+=======
 How to define replicas in k8s:
     - Setting "replica" in your Deployment (recommended)!!!!
     - Defining a ReplicaSet
@@ -115,4 +119,41 @@ kubectl scale --replicas=4 deployment/tomcat-deployment
                 check with: kubectl get services
                             kubectl describe services tomcat-load-balancer
 
+Deployments
+===========
+Are high-level objects in K8s to define the desired state of an application:
 
+    - they consist of Pods
+    - they can also include ReplicaSets
+
+With deployment objects you can:
+
+    - create a new deployment
+    - update an existing edployment
+        ex. kubectl scale --replicas=... deployment/tomcat-deployment
+    - apply rolling updates to Pods running on your cluster
+        to avoid downtime
+    - rollback to a previous version
+    - pause & resume a deployment
+
+Working with deployments
+    - List deployments:
+
+            kubectl get deployments
+
+    - view status of deployment roll outs
+
+            kubectl rollout status deployment tomcat-deployment
+
+    - set the image of a deployment
+
+            kubectl set image deployment/tomcat-deployment tomcat=tomcat:9.0.1
+
+    - view the history of a rollout, including previous revisions
+
+            kubectl rollout history deployment/tomcat-deployment
+                output: REVISION    CHANGE-CAUSE
+                        3           <none>
+                        4           <none>
+
+            kubectl rollout history deployment/tomcat-deployment --revision=2
