@@ -291,3 +291,26 @@ In K8s, every service gets a DNS name with following nomenclature:
                                 - K8s DNS names will include this namespae in the assigned DNS name
         svc.cluster.local   can be considered as the top-level domain
 
+DNS exercise
+------------
+Wordpress & MySQL are both separate deployments
+    - however, to function Wordpress needs MySQL
+    - Specifically, it must know a TCP/IP hostname at which to connect to MySQL
+
+Let's use DNS to create a WordPress deployment that expects MySQL to be running on the
+"wordpress-mysql" hostname in the same namespace
+    - we will allow this value to be overridden by environment variables as a "best practice"
+    - this follows the "convertion over configuration" best practice
+
+    MySQL
+    *****
+    We'll deploy MySQL in a deployment named "wordpress-mysql"
+
+    once deployed, it will run MySQL on port 3306 on the wordpress-mysql hostname
+
+    Wordpress
+    *********
+    We'll deploy Wordpress named as "wordpress"
+
+    We'll configure MySQL to be available on the "wordpress-mysql" hostname and tell Wordpress to
+    expect it there
