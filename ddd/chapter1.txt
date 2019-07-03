@@ -1,0 +1,44 @@
+What is DDD
+===========
+
+Challenges of creating software for complex problem domains
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Code created without a Common language
+A lack of organization
+The ball of mud pattern stifles development
+A lack of focus on the problem domain
+
+How the patterns of DDD manage complexity
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    The strategic patterns of DDD
+        Distilling the Problem domain to reveal what is important
+        Creating a Model to solve domain problems
+        Using a shared language to enable modeling collaboration
+        Isolate models from ambiguity and corruption
+        Understanding relationships between contexts
+
+    The tactical patterns of DDD
+        Also known as model building blocks = a collection of patterns that help create effective models for
+            complex bounded contexts
+
+    The problem space and the solution space
+        Problem space: distils the problem domain into more manageable subdomains
+                            + reveal what is important and wher to focus effort (see chapter 2)
+        Solution space: shape the architecture of your application and make it easier to manage
+
+Practices and principles of DDD
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    Focusing on the Core Domain --> core subdomains
+    Learning through collaboration
+    Creating models through exploration and experimentation
+    Communication
+    Constantly evolving the model
+
+Popular misconceptions of DDD
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    DDD != a handful of implementation patterns
+    DDD != framework
+    DDD != silver bullet
+
