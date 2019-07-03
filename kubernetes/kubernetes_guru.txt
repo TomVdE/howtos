@@ -270,3 +270,24 @@ alternatives:
     - write a deployment.yml file and a service.yml file and use kubectl apply on both
     - use a K8s package manager like helm to handle the work for you
 
+DNS & Service discovery
+=======================
+DNS = Domain Name Service, translates names into IP addresses
+
+K8s has a built-in DNS service that is launched (and configured) automatically
+
+K8s configures kubelets to tell individual containers to use the DNS services's IP to resolve
+    DNS names into ip addresses
+
+In K8s, every service gets a DNS name with following nomenclature:
+
+    <my-service-name>.<my-namespace>.svc.cluster.local
+
+        my-service-name     is typically the name of your deployment
+        my-namespace
+                            you can define "namespaces" to separate your cluster into smaller
+                            logical clusters
+                                - by default, everything is in the "default" namespace
+                                - K8s DNS names will include this namespae in the assigned DNS name
+        svc.cluster.local   can be considered as the top-level domain
+
