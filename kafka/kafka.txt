@@ -19,3 +19,51 @@ Data is kept only for a limited time (default is one week), after that, the data
 Once data is written to a partition, it can't be changed = IMMUTABILITY
 
 Data is assigned randomly to a partition unless a key is provided
+
+Brokers
+=======
+A Kafka cluster is composed of multiple brokers (can be seen a servers)
+
+Each broker is identified by an ID (interger)
+
+Each broker contains certain topic partitions, each broker has some of the data but not all the data
+
+After connecting to any broker (called a bootstrap broker), you will be connected to the entire
+    cluster, even if you have 100 brokers in the cluster
+
+A good number to get started is 3 brokers, but some bug clusters have over 100 brokers
+
+Brokers and topics
+==================
+See 003_brokers_and_topics.jpg
+
+Topic replication factor
+=========================
+Kafka is a distributed system. This means we need replication so that when 1 machine goes down, the
+systeem keeps working.
+
+When you create a topic, you have to decide on the replication factor. Must be > 1, usually best between
+    2 and 3. This way if a broker is down, another broker can serve the data.
+
+Concept of Leader for a Parition
+================================
+At any time, only 1 broker can be a leader for a give partition!
+Only that leader can receive and serve data for that partition. the other brokers will just be passive
+    replicas that will synchronize the data.
+==> Each partition has 1 leader and multiple ISR (in-sync replica)
+
+The leader and ISR's are determined by Zookeeper
+
+Producers
+=========
+Producers write data to topics (which is made of partitions)
+Producers automitically know to which broker and partition to write to
+
+In case Broker failures, Producers will automatically recover
+
+The load is balanced to many brokers, thanks to the number of partitions.
+
+Producers can choose to reveice acknowledgment of data writes:
+    - acks=0        Producer won't wait for acknowledgment ==> possible data loss)
+    - acks=1        Producer will wait for leader acknowledgment (limited data loss)
+    - acks=all      Leader + replicas acknowledgment (no data loss)
