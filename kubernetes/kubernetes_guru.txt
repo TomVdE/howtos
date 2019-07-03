@@ -202,3 +202,62 @@ Selectors are a way of expressing how to select objects based on their labels
                       - containerPort: 8080
                     nodeSelector:                       #is used to select on which nodes to deploy this container on
                         key1: value1
+
+Health checks
+=============
+K8s has 2 types of health checks to ascertain 2 different things
+
+    - Readiness Probes:
+        to determine when a Pod is "ready" (e.g. after is has started to see when it's ready to take
+        requests from external services)
+        check to make sure the Pod has started and is ready to begin taking requests
+
+    - Liveness Probes:
+        to determine when a Pod is "healthy" or "unhealthy" after is has become ready
+        check the containers continue to be able to accept and service requests without error in a
+            reasonable amount of time
+
+    Both types of probes can use a variety of methods:
+        - Successful HTTP or TCP request to the Pod
+        - Successful command execution on the Pod (exit code 0)
+
+    Probes are defined on the container in a Deployment or Pod specification
+
+
+    deployment.yml
+    ==============
+    apiVersion: apps/v1beta2
+    kind: Deployment
+    metadata:
+        name: tomcat-deployment
+    spec:
+        selector:
+            matchLabels:
+                app: tomcat
+            replicas: 4
+            template:
+                metadata:
+                    labels:
+                        app: tomcat
+                spec:
+                    containers:
+                    - name: tomcat
+                      image: tomcat:9.0
+                      ports:
+                      - containerPort: 8080
+                      livenessProbe:
+                        httpGet:
+                            path: /
+                            port: 8080
+                        initialDelaySeconds: 30
+                        periodSeconds: 30
+                      readinessProbe:
+                        httpGet:
+                            path: /
+                            port: 8080
+                        initialDelaySeconds: 15
+                        periodSeconds: 3
+
+        kubectl apply -f ./deployment.yml
+        kubectl describe deployment tomcat-deployment       --> in the output you see a Liveness and
+                                                                    Readiness line for this container
