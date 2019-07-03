@@ -1,12 +1,21 @@
-kafka-topics.bat --zookeeper 127.0.0.1:2181 --topic first_topic --create --partitions 3 --replication-factor 1
+Topics
+======
+A particular stream of data
+    you can have as many topics as you want
+    a topic is identified by its name
 
-kafka-topics --zookeeper 127.0.0.1:2181 --list
-kafka-topics --zookeeper 127.0.0.1:2181 --topic first_topic --describe
-kafka-topics --zookeeper 127.0.0.1:2181 --topic first_topic --delete
+Partitions and offsets
+======================
+Topics are split in partition
+    each partition is ordered, no ordering across partitions
+    each message within a partition gets an incremental id, called OFFSET
+        --> offsets only have a meaning for a specific partition
+                e.g. offset 3 in partition 0 doesn't represent the same data as offset 3 in partion 1
 
-kafka-console-producer --broker-list 127.0.0.1:9092 --topic first_topic 
+A message is identified as: Kafka Topic - Partition ... - Offset ...
 
-kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic
-kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic --from-beginning
+Data is kept only for a limited time (default is one week), after that, the data is gone
 
-kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic --group my-first-application
+Once data is written to a partition, it can't be changed = IMMUTABILITY
+
+Data is assigned randomly to a partition unless a key is provided
