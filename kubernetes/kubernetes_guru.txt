@@ -314,3 +314,73 @@ Let's use DNS to create a WordPress deployment that expects MySQL to be running 
 
     We'll configure MySQL to be available on the "wordpress-mysql" hostname and tell Wordpress to
     expect it there
+
+Volumes
+=======
+Containers exist in the 'logical' world while physical disks exist in the physical world.
+So there must be some kind of bridge mechanism to map these 2 worlds.
+Therefore K8s has the concept of persistent volumes to connect containers to volumes that are mapped to
+    some form a physical storage as defined by K8s administrator.
+
+
+Volumes can be considered just a directory, with some data, which containers in a pod can access
+
+Types of volumes
+----------------
+K8s supports multiple types of volumes that take care of how that data is stored, persisted and made
+    available
+        -> support for a variety of cloud providers's block store products
+            ex. Azure Disk & Azure File, AWS Elastic BLock Store, Google Copute Engine Persistent Disk
+        -> support for SAN-type hardware, file systems, ...
+            ex. CephFS, Fibre Channel, GlusterFS, ...
+        -> support for local volumes (for testing, minikube only, not production)
+
+Certain types of Volumes can also provide sharing of files between Pods by being mounted to multiple Pods
+    simultaneously
+
+Using volumes
+-------------
+Pods can specify what volumes they need and where to mount them
+    -> using the spec.volumes field (what volumes they need)
+    -> using the spec.containers.volumeMounts field (where to mount them)
+
+Processes in the container the see a filesystem view of the data in that volume
+
+Using Volumes lets us seperate stateless portions of our application (the code) from stateful data
+
+Using PersistentVolumes
+-----------------------
+PersistentVolumes are Volumes designed to provide persistent disk)like functionality
+
+Using them involves:
+    -> Provisioning a PersistentVolume (aka creating/installing a disk in a virtual machine or
+        hardware server)
+    -> Establishing a PersistentVolumeClaim (is a request for storage by a user/Pod)
+
+Creating a Volume
+-----------------
+PersistentVolumes are defined using a "PersistentVolume" definition that specifies their type, size, and
+    how they can be accessed
+
+Type and access type is highly dependent on the underlying media
+    - local disk
+    - network mount
+    - cloud block storage service
+    - directory on the host (testing only, not for production)
+
+tasj-pv-volume.yml
+==================
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+    name: task-pv-volume
+    labels:
+        type: local
+spec:
+    storageClassName: manual
+    capacity:
+        storage: 10Gi
+    accessModes:
+        - ReadWriteOnce
+    hostPath:
+        path: "/mnt/data"
