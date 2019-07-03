@@ -67,3 +67,52 @@ See ./images/001_kubernates_architecture.jpg
 
     k8s master will evaluate your deployment descriptor, decides where and how to run it and will direct kubelet on the appropriate
             node or nodes if multiple replica's are needed
+
+How to define replicas in k8s:
+    - Setting "replica" in your Deployment (recommended)!!!!
+    - Defining a ReplicaSet
+    - Bare Pods
+    - Job
+    - DeamonSet
+
+Change the deployment.yml OR use the scale command:
+
+deployment.yml
+==============
+apiVersion: apss/v1beta2
+kind: Deployment
+...
+spec:
+  ...
+  replicas: 4
+  template:
+    ...
+    spec:
+      containers:
+      - name: tomcat
+        image: tomcat:9.0
+        ports:
+        - containerPort: 8080
+==================
+OR
+kubectl scale --replicas=4 deployment/tomcat-deployment
+    check with:     kubectl get deployments
+                    kubectl describe deployments tomcat-deployment
+
+    to take advantage of our replicas, we need to update our service definition:
+        previously we did:
+
+                kubectl expose deployment tomcat-deployment --type=NodePort
+                                this command created an external port that connected to the port
+                                    running on the pod that ran the tomcat container
+
+        now we need a loadbalancer service, as it is a service that exposes a single port but uses a lot
+        of internal logic to decide which replica to send the request to:
+
+                kubectl expose deployment tomcat-deployment --type=LoadBalancer --port=8080
+                    --target-port=8080 --name tomcat-load-balancer
+
+                check with: kubectl get services
+                            kubectl describe services tomcat-load-balancer
+
+
