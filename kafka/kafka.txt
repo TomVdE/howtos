@@ -76,3 +76,25 @@ If key=null, data is sent round robin (broker 101, then broker 102, ...)
 If key != null, all messages for that key will always go to the same partition
     ==> a key is used when you need message ordering for a specific field (ex. truck_id)
 
+Consumers
+=========
+Consumers read data from a topic (identified by name)
+Consumers know which broker to read from
+
+In case of broker failures, consumers know how to recover
+
+Data is read in order within each partition
+Consumers can read from multiple partitions
+See image 008_consumers.jpg
+    There is no guarantee about the order between Broker 102 Topic A / Partition 1 and
+                    Broker 103 Topic A / Partition 2
+
+Consumer groups
+---------------
+Consumers read data in consumer groups
+Each consumer within a group reads from exclusive partitions
+If you have more consumers than partitions, some consumers will be inactive. One reason you want this is
+    to have (inactive) consumers that can take over when active consumers get lost.
+    But normally you have as many consumers as you have partitions.
+See 009_consumer_groups.jpg
+
