@@ -368,7 +368,7 @@ Type and access type is highly dependent on the underlying media
     - cloud block storage service
     - directory on the host (testing only, not for production)
 
-tasj-pv-volume.yml
+task-pv-volume.yml
 ==================
 kind: PersistentVolume
 apiVersion: v1
@@ -384,3 +384,40 @@ spec:
         - ReadWriteOnce
     hostPath:
         path: "/mnt/data"
+
+Pod use PersistentVolumeClaims to request physical storage defined by PersistentVolumes
+The PersistentVolumeClaim specifies what it is requesting
+
+K8s uses the Claim to look for a PersistentVolume that satisfies the claim's requirements
+    - if it finds a match, it binds the claim to the volume
+    - if it cannot find a match, it results in an error
+
+task-pv-claim.yml
+=================
+kind: PersistentVolumeClain
+apiVersion: v1
+metadata:
+    name: task-pv-claim
+spec:
+    storageClassName: manual
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        request:
+            storage: 3Gi
+
+Secrets
+=======
+Secrets contain small amounts of data
+
+Secrets can be delivered to a pod in the form of:
+    - A file placed on a volume at runtime containing the secret data (useful for certificates)
+
+    - An env. variable referenced by the Pod and inserted at runtime into the environment by the Kubelet
+    running the Pd - just like any other env. variable
+
+K8s provides separation for secrets, it does not provide strong encryption
+Secrets are typically Base64 encoded strings stored separately from configuration and injected @runtime
+You can encode it manually or use K8s tools to do it for you
+
+Secrets are key:value pairs, both arbitrary strings
