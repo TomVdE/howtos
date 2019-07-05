@@ -98,3 +98,38 @@ If you have more consumers than partitions, some consumers will be inactive. One
     But normally you have as many consumers as you have partitions.
 See 009_consumer_groups.jpg
 
+Consumer offsets (you can see offsets as bookmarking the point where you have been reading)
+================
+Kafka stores the offsets at which a consumer group has been reading
+
+The offsets are committed live in a Kafka topic named __consumer_offsets
+
+When a consumer in a group has processed data received from kafka, it should be committing the offsets
+    = writing the offsets to the topic named __consumer_offsets
+
+    Why? If a consumers goes down and comes back up again, it can start reading from where it left
+See 010_consumer_offsets.jpg
+
+Delivery semantics for consumers
+--------------------------------
+Consumers choose when to commit offsets.
+3 options:
+    - At most once      -> offsets are committed as soon as the message is received
+                        -> if the processing goes wrong, the message will be lost
+                                message won't be read again
+    - At least once     -> offsets are committed after the message is processed
+                        -> if the processing goes wrong, the message will be read again
+                        -> can result in duplicate processing of the message, make sure your
+                            processing is IDEMPOTENT (= processing again won't impact your systems)
+    - Exactly once      -> Can only be achieved for Kafka => Kafka workflows using Kafka Streams API
+                        -> For Kafka => External System workflows, use an idempotent consumer
+
+Kafka broker discovery
+======================
+Every Kafka broker is also called a "boostrap server"
+
+That means that you only need to connect to one broker, and you will be connected to the entire cluster
+
+Each broker knows about all brokers, topics, and partitions
+
+See 011_broker_discovery.jpg
