@@ -150,3 +150,6 @@ Zookeeper has a leader (handles the writes), the rest of the servers are followe
 
 Zookeeper does NOT store consumer offsets with Kafka > v0.10
 
+Kafka guarantees
+================
+See 013_kafka_guarantees.jpg
