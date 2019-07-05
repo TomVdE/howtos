@@ -1,0 +1,33 @@
+Distilling the problem domain
+=============================
+
+Knowledge crunching and collaboration
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Knowledge crunching = the art of distilling relevant information from the problem domain in order to build a
+    useful model that can fulfill the needs of business use cases
+
+Collaboration (between tech team and domain experts) is needed to get a deep insight of the problem domain
+
+Use whiteboards, work through examples with business experts and brainstorm together.
+As a starting point, use Business Use Cases
+
+    Ubiquitous Language
+    -------------------
+        This language   should be made explicit
+                        should be used when describing the domain model and problem domain
+                        should be used in the code implementation of the model (terms and concepts used as class names,
+                                                                                    properties, method names, ...)
+    Domain knowledge
+    ----------------
+        The more you own domain knowledge, the better you are able to create a model at the heart of the application's
+        code base that can fulfill the business use cases
+
+    Role of the Business Analist
+    ----------------------------
+
+    Ongoing Process
+    ---------------
+
+Gaining domain insight with domain experts
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
